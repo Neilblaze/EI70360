@@ -50,6 +50,16 @@ class MultiHeadAttention(nn.Module):
 
         return projection
 
+class ResidualLayerNorm(nn.Module):
+
+    def __init__(self, d_model, dropout=0.3):
+        super().__init__()
+        self.layer_norm = nn.LayerNorm(d_model)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x, residual):
+        return self.layer_norm(self.dropout(x)+residual)
+
 if __name__=="__main__":
 
     toy_encodings = torch.Tensor([
@@ -66,3 +76,8 @@ if __name__=="__main__":
     toy_MHA = toy_MHA_layer(toy_encodings)
     print("Toy MHA: \n", toy_MHA)
     print("Toy MHA Shape: \n", toy_MHA.shape)
+
+    toy_norm_layer = ResidualLayerNorm(d_model=4)
+    toy_norm = toy_norm_layer(toy_MHA, toy_encodings)
+    print("Toy Norm: \n", toy_norm)
+    print("Toy Norm Shape: \n", toy_norm.shape)
