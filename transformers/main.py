@@ -60,6 +60,38 @@ class ResidualLayerNorm(nn.Module):
     def forward(self, x, residual):
         return self.layer_norm(self.dropout(x)+residual)
 
+class PWFFN(nn.Module):
+
+    def __init__(self, d_model, d_ff, dropout=0.3):
+        super().__init__()
+
+        self.ff = nn.Sequential(
+            nn.Linear(d_model, d_ff),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(d_ff, d_model)
+        )
+
+    def forward(self, x):
+        return self.ff(x)
+
+class EncoderLayer(nn.Module):
+
+    def __init__(self, d_model, n_heads, d_ff, dropout=0.3):
+        super().__init__()
+
+        self.norm_1 = ResidualLayerNorm(d_model, dropout)
+        self.norm_2 = ResidualLayerNorm(d_model, dropout)
+        self.mha = MultiHeadAttention(d_model, n_heads, dropout)
+        self.pwffn = PWFFN(d_model, d_ff, dropout)
+
+    def forward(self, x):
+        mha = self.mha(x)
+        norm_1 = self.norm_1(mha, x)
+        pwffn = self.pwffn(norm_1)
+        norm_2 = self.norm_2(pwffn, norm_1)
+        return norm_2
+
 if __name__=="__main__":
 
     toy_encodings = torch.Tensor([
@@ -72,12 +104,7 @@ if __name__=="__main__":
     print("Toy Encodings: \n", toy_encodings)
     print("Toy Encodings Shape: \n", toy_encodings.shape)
 
-    toy_MHA_layer = MultiHeadAttention(d_model=4, n_heads=2)
-    toy_MHA = toy_MHA_layer(toy_encodings)
-    print("Toy MHA: \n", toy_MHA)
-    print("Toy MHA Shape: \n", toy_MHA.shape)
-
-    toy_norm_layer = ResidualLayerNorm(d_model=4)
-    toy_norm = toy_norm_layer(toy_MHA, toy_encodings)
-    print("Toy Norm: \n", toy_norm)
-    print("Toy Norm Shape: \n", toy_norm.shape)
+    toy_encoder_layer = EncoderLayer(d_model=4, n_heads=2, d_ff=16)
+    toy_encoder_layer_output = toy_encoder_layer(toy_encodings)
+    print("Toy Encoder Layer Output: \n", toy_encoder_layer_output)
+    print("Toy Encoder Layer Output Shape: \n", toy_encoder_layer_output.shape)
