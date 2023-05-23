@@ -96,26 +96,50 @@ class Embeddings(nn.Module):
 
     def __init__(self, vocab_size, padding_idx, d_model):
         super().__init__()
-        self.d=d_model
+        self.d_model=d_model
         self.embed = nn.Embedding(vocab_size, d_model, padding_idx=padding_idx)
 
     def forward(self, x):
         embedding = self.embed(x)
         return embedding * math.sqrt(self.d_model)
 
+class PositionalEncoding(nn.Module):
+
+    def __init__(self, max_seq_len, d_model, dropout=0.3):
+        super().__init__()
+        self.dropout = nn.Dropout(dropout)
+
+        pe = torch.zeros(max_seq_len, d_model)
+        pos = torch.arange(0, max_seq_len).unsqueeze(1).float()
+        two_i = torch.arange(0, d_model, step=2).float()
+        div_term = torch.pow(10000, (two_i/torch.Tensor([d_model]))).float()
+        pe[:, 0::2] = torch.sin(pos/div_term)
+        pe[:, 1::2] = torch.cos(pos/div_term)
+        pe = pe.unsqueeze(0)
+        self.register_buffer("pe", pe)
+
+    def forward(self, x):
+        pe = self.pe[:, :x.shape[1]].detach()
+        x += pe
+        return self.dropout(x)
+
 if __name__=="__main__":
 
-    toy_encodings = torch.Tensor([
-        [
-            [0.0, 0.1, 0.2, 0.3], 
-            [1.0, 1.1, 1.2, 1.3], 
-            [2.0, 2.1, 2.2, 2.3],
-        ]
-    ]) 
-    print("Toy Encodings: \n", toy_encodings)
-    print("Toy Encodings Shape: \n", toy_encodings.shape)
+    toy_tokenized_inputs = torch.LongTensor([[1, 2, 3, 4, 0, 0]])
+    print("Toy Tokenized Inputs: \n", toy_tokenized_inputs)
+    print("Toy Tokenized Inputs Shape: \n", toy_tokenized_inputs.shape)
+
+    toy_embeddings_layer = Embeddings(5, 0, 4)
+    toy_embeddings = toy_embeddings_layer(toy_tokenized_inputs)
+    print("Toy Embeddings: \n", toy_embeddings)
+    print("Toy Embeddings Shape: \n", toy_embeddings.shape)
+
+    toy_PE_layer = PositionalEncoding(128, 4)
+    toy_PE = toy_PE_layer(toy_embeddings)
+    print("Toy PE: \n", toy_PE)
+    print("Toy PE Shape: \n", toy_PE.shape)
 
     toy_encoder_layer = EncoderLayer(d_model=4, n_heads=2, d_ff=16)
-    toy_encoder_layer_output = toy_encoder_layer(toy_encodings)
+    toy_encoder_layer_output = toy_encoder_layer(toy_PE)
     print("Toy Encoder Layer Output: \n", toy_encoder_layer_output)
     print("Toy Encoder Layer Output Shape: \n", toy_encoder_layer_output.shape)
