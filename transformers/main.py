@@ -20,11 +20,14 @@ class MultiHeadAttention(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.mha_linear = nn.Linear(d_model, d_model)
 
-    def scaled_dot_product_attention(self, Q, K, V):
+    def scaled_dot_product_attention(self, Q, K, V, mask):
 
         QK = Q @ K.permute(0, 2, 1)
 
         scaled_QK = QK / math.sqrt(self.d)
+
+        if mask is not None:
+            scaled_QK = scaled_QK.masked_fill(mask==0, -1e9)
 
         attention_weights = F.softmax(scaled_QK, dim=-1)        
 
@@ -32,7 +35,7 @@ class MultiHeadAttention(nn.Module):
 
         return output
 
-    def forward(self, x):
+    def forward(self, x, mask=None):
 
         Qs = [linear_Q(x) for linear_Q in self.linear_Qs]
         Ks = [linear_K(x) for linear_K in self.linear_Ks]
@@ -41,7 +44,7 @@ class MultiHeadAttention(nn.Module):
         output_per_head = []
 
         for Q, K, V in zip(Qs, Ks, Vs):
-            output = self.scaled_dot_product_attention(Q, K, V)
+            output = self.scaled_dot_product_attention(Q, K, V, mask)
             output_per_head.append(output)
 
         output = torch.cat(output_per_head, -1)
