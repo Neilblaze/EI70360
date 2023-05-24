@@ -123,23 +123,47 @@ class PositionalEncoding(nn.Module):
         x += pe
         return self.dropout(x)
 
+class Encoder(nn.Module):
+
+    def __init__(
+        self,
+        vocab_size,
+        padding_idx,
+        d_model,
+        max_seq_len,
+        num_heads,
+        d_ff,
+        num_layers,
+        dropout=0.3
+        ):
+        super().__init__()
+
+        self.embedding = Embeddings(vocab_size, padding_idx, d_model)
+        self.PE = PositionalEncoding(max_seq_len, d_model, dropout)
+
+        self.encoders = nn.ModuleList([EncoderLayer(
+            d_model,
+            num_heads,
+            d_ff,
+            dropout,
+        ) for layer in range(num_layers)])
+
+    def forward(self, x):
+        embeddings = self.embedding(x)
+        encoding = self.PE(embeddings)
+
+        for encoder in self.encoders:
+            encoding = encoder(encoding)
+
+        return encoding
+
 if __name__=="__main__":
 
     toy_tokenized_inputs = torch.LongTensor([[1, 2, 3, 4, 0, 0]])
     print("Toy Tokenized Inputs: \n", toy_tokenized_inputs)
     print("Toy Tokenized Inputs Shape: \n", toy_tokenized_inputs.shape)
 
-    toy_embeddings_layer = Embeddings(5, 0, 4)
-    toy_embeddings = toy_embeddings_layer(toy_tokenized_inputs)
-    print("Toy Embeddings: \n", toy_embeddings)
-    print("Toy Embeddings Shape: \n", toy_embeddings.shape)
-
-    toy_PE_layer = PositionalEncoding(128, 4)
-    toy_PE = toy_PE_layer(toy_embeddings)
-    print("Toy PE: \n", toy_PE)
-    print("Toy PE Shape: \n", toy_PE.shape)
-
-    toy_encoder_layer = EncoderLayer(d_model=4, n_heads=2, d_ff=16)
-    toy_encoder_layer_output = toy_encoder_layer(toy_PE)
-    print("Toy Encoder Layer Output: \n", toy_encoder_layer_output)
-    print("Toy Encoder Layer Output Shape: \n", toy_encoder_layer_output.shape)
+    toy_encoder = Encoder(vocab_size=5, padding_idx=0, d_model=4, max_seq_len=128, num_heads=2, d_ff=16, num_layers=2)
+    toy_encoder_output = toy_encoder(toy_tokenized_inputs)
+    print("Toy Encoder Output: \n", toy_encoder_output)
+    print("Toy Encoder Output Shape: \n", toy_encoder_output.shape)
