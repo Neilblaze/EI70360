@@ -35,11 +35,11 @@ class MultiHeadAttention(nn.Module):
 
         return output
 
-    def forward(self, x, mask=None):
+    def forward(self, pre_q, pre_k, pre_v, mask=None):
 
-        Qs = [linear_Q(x) for linear_Q in self.linear_Qs]
-        Ks = [linear_K(x) for linear_K in self.linear_Ks]
-        Vs = [linear_V(x) for linear_V in self.linear_Vs]
+        Qs = [linear_Q(pre_q) for linear_Q in self.linear_Qs]
+        Ks = [linear_K(pre_k) for linear_K in self.linear_Ks]
+        Vs = [linear_V(pre_v) for linear_V in self.linear_Vs]
 
         output_per_head = []
 
@@ -89,7 +89,7 @@ class EncoderLayer(nn.Module):
         self.pwffn = PWFFN(d_model, d_ff, dropout)
 
     def forward(self, x):
-        mha = self.mha(x)
+        mha = self.mha(x,x,x)
         norm_1 = self.norm_1(mha, x)
         pwffn = self.pwffn(norm_1)
         norm_2 = self.norm_2(pwffn, norm_1)
@@ -157,6 +157,61 @@ class Encoder(nn.Module):
 
         for encoder in self.encoders:
             encoding = encoder(encoding)
+
+        return encoding
+
+class DecoderLayer(nn.Module):
+
+    def __init__(self, d_model, n_heads, d_ff, dropout=0.3):
+        super().__init__()
+
+        self.norm_1 = ResidualLayerNorm(d_model, dropout)
+        self.norm_2 = ResidualLayerNorm(d_model, dropout)
+        self.norm_3 = ResidualLayerNorm(d_model, dropout)
+        self.masked_mha = MultiHeadAttention(d_model, n_heads, dropout)
+        self.enc_dec_mha = MultiHeadAttention(d_model, n_heads, dropout)
+        self.pwffn = PWFFN(d_model, d_ff, dropout)
+
+    def forward(self, x, encoder_outputs, trg_mask, src_mask):
+        masked_mha = self.masked_mha(x,x,x, mask=targ_mask)
+        norm_1 = self.norm_1(masked_mha, x)
+        enc_dec_mha = self.enc_dec_mha(norm_1, encoder_outputs, encoder_outputs, mask=src_mask)
+        norm_2 = self.norm_2(enc_dec_mha, norm_1)
+        pwffn = self.pwffn(norm_2)
+        norm_3 = self.norm_3(pwffn, norm_2)
+        return norm_3
+
+class Decoder(nn.Module):
+
+    def __init__(
+        self,
+        vocab_size,
+        padding_idx,
+        d_model,
+        max_seq_len,
+        num_heads,
+        d_ff,
+        num_layers,
+        dropout=0.3
+        ):
+        super().__init__()
+
+        self.embedding = Embeddings(vocab_size, padding_idx, d_model)
+        self.PE = PositionalEncoding(max_seq_len, d_model, dropout)
+
+        self.decoders = nn.ModuleList([DecoderLayer(
+            d_model,
+            num_heads,
+            d_ff,
+            dropout,
+        ) for layer in range(num_layers)])
+
+    def forward(self, x, encoder_outputs, trg_mask, src_mask):
+        embeddings = self.embedding(x)
+        encoding = self.PE(embeddings)
+
+        for decoder in self.decoders:
+            encoding = decoder(encoding, encoder_outputs, trg_mask, src_mask)
 
         return encoding
 
