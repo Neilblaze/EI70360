@@ -26,16 +26,15 @@ class MultiHeadAttention(nn.Module):
 
         scaled_QK = QK / math.sqrt(self.d)
 
-        if mask is not None:
-            scaled_QK = scaled_QK.masked_fill(mask==0, -1e9)
+        masked_scaled_QK = scaled_QK.masked_fill(mask==0, -1e9)
 
-        attention_weights = F.softmax(scaled_QK, dim=-1)        
+        attention_weights = F.softmax(masked_scaled_QK, dim=-1)        
 
         output = attention_weights @ V      
 
         return output
 
-    def forward(self, pre_q, pre_k, pre_v, mask=None):
+    def forward(self, pre_q, pre_k, pre_v, mask):
 
         Qs = [linear_Q(pre_q) for linear_Q in self.linear_Qs]
         Ks = [linear_K(pre_k) for linear_K in self.linear_Ks]
@@ -88,8 +87,8 @@ class EncoderLayer(nn.Module):
         self.mha = MultiHeadAttention(d_model, n_heads, dropout)
         self.pwffn = PWFFN(d_model, d_ff, dropout)
 
-    def forward(self, x):
-        mha = self.mha(x,x,x)
+    def forward(self, x, mask):
+        mha = self.mha(x,x,x, mask)
         norm_1 = self.norm_1(mha, x)
         pwffn = self.pwffn(norm_1)
         norm_2 = self.norm_2(pwffn, norm_1)
@@ -151,12 +150,12 @@ class Encoder(nn.Module):
             dropout,
         ) for layer in range(num_layers)])
 
-    def forward(self, x):
+    def forward(self, x, mask):
         embeddings = self.embedding(x)
         encoding = self.PE(embeddings)
 
         for encoder in self.encoders:
-            encoding = encoder(encoding)
+            encoding = encoder(encoding, mask)
 
         return encoding
 
@@ -173,7 +172,7 @@ class DecoderLayer(nn.Module):
         self.pwffn = PWFFN(d_model, d_ff, dropout)
 
     def forward(self, x, encoder_outputs, trg_mask, src_mask):
-        masked_mha = self.masked_mha(x,x,x, mask=targ_mask)
+        masked_mha = self.masked_mha(x,x,x, mask=trg_mask)
         norm_1 = self.norm_1(masked_mha, x)
         enc_dec_mha = self.enc_dec_mha(norm_1, encoder_outputs, encoder_outputs, mask=src_mask)
         norm_2 = self.norm_2(enc_dec_mha, norm_1)
@@ -215,13 +214,68 @@ class Decoder(nn.Module):
 
         return encoding
 
+class Transformer(nn.Module):
+
+    def __init__(
+        self, 
+        src_vocab_size, 
+        trg_vocab_size, 
+        d_model, 
+        d_ff,
+        num_layers, 
+        num_heads, 
+        src_padding_idx, 
+        trg_padding_idx, 
+        max_seq_len,
+        dropout=0.3
+        ):
+        super().__init__()
+
+        self.num_heads = num_heads
+        self.src_padding_idx = src_padding_idx
+        self.trg_padding_idx = trg_padding_idx
+
+        self.encoder = Encoder(vocab_size=src_vocab_size, padding_idx=src_padding_idx, d_model=d_model, max_seq_len=max_seq_len, num_heads=num_heads, d_ff=d_ff, num_layers=num_layers)
+        self.decoder = Decoder(vocab_size=trg_vocab_size, padding_idx=trg_padding_idx, d_model=d_model, max_seq_len=max_seq_len, num_heads=num_heads, d_ff=d_ff, num_layers=num_layers)
+        self.linear_layer = nn.Linear(d_model, trg_vocab_size)
+
+        for p in self.parameters():
+            if p.dim() > 1:
+                nn.init.xavier_uniform_(p)
+
+    def create_src_mask(self, src):
+        src_mask = (src != self.src_padding_idx).unsqueeze(1)
+        return src_mask
+
+    def create_trg_mask(self, trg):
+        trg_mask = (trg != self.trg_padding_idx).unsqueeze(1)
+        mask = torch.ones((1, trg.shape[1], trg.shape[1])).triu(1)
+        mask = mask == 0
+        trg_mask = trg_mask & mask
+        return trg_mask
+
+    def forward(self, src, trg):
+
+        src_mask = self.create_src_mask(src)
+        trg_mask = self.create_trg_mask(trg)
+
+        encoder_outputs = self.encoder(src, src_mask)
+        decoder_outputs = self.decoder(trg, encoder_outputs, trg_mask, src_mask)
+
+        logits = self.linear_layer(decoder_outputs)
+        return logits
+
 if __name__=="__main__":
 
-    toy_tokenized_inputs = torch.LongTensor([[1, 2, 3, 4, 0, 0]])
-    print("Toy Tokenized Inputs: \n", toy_tokenized_inputs)
-    print("Toy Tokenized Inputs Shape: \n", toy_tokenized_inputs.shape)
+    toy_tokenized_src = torch.LongTensor([[1, 2, 3, 4, 0, 0]])
+    print("Toy Tokenized Source: \n", toy_tokenized_src)
+    print("Toy Tokenized Source Shape: \n", toy_tokenized_src.shape)
 
-    toy_encoder = Encoder(vocab_size=5, padding_idx=0, d_model=4, max_seq_len=128, num_heads=2, d_ff=16, num_layers=2)
-    toy_encoder_output = toy_encoder(toy_tokenized_inputs)
-    print("Toy Encoder Output: \n", toy_encoder_output)
-    print("Toy Encoder Output Shape: \n", toy_encoder_output.shape)
+    toy_tokenized_trg = torch.LongTensor([[3, 1, 4, 2, 5, 0]])
+    print("Toy Tokenized Target: \n", toy_tokenized_trg)
+    print("Toy Tokenized Target Shape: \n", toy_tokenized_trg.shape)
+
+    toy_transformer = Transformer(src_vocab_size=5, trg_vocab_size=6, d_model=4, d_ff=16, num_layers=2, num_heads=2, src_padding_idx=0, trg_padding_idx=0, max_seq_len=128)
+    toy_transformer_output = toy_transformer(toy_tokenized_src, toy_tokenized_trg)
+    print("Toy Transformer Output: \n", toy_transformer_output)
+    print("Toy Transformer Output Shape: \n", toy_transformer_output.shape)
