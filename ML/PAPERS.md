@@ -1,0 +1,55 @@
+- Transformer: [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+- TransformerXL: [Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context](https://arxiv.org/abs/1901.11116)
+- VGG
+- Mask RCNN
+- Masked Autoencoder
+- BEIT
+- BERT
+- Cold Fusion
+- ConyMixer
+- Deep and Cross Network
+- DenseNet
+- DistilBERT
+- DiT
+- DocFormer
+- Donut
+- EfficientNet
+- ELMO
+- Entity Embeddings
+- ERNIE-Layout
+- FastBERT
+- Fast RCNN
+- Faster RCNN
+- MobileBERT
+- MobileNetV1
+- MobileNetV2
+- MobileNetV3
+- RCNN
+- ResNet
+- ResNext
+- SentenceBERT
+- Single Shot MultiBox Detector (SSD)
+- StructuralLM
+- Swin Transformer
+- TableNet
+- TabTransformer
+- Tabular ResNet
+- TinyBERT
+- Vision Transformer
+- Wide and Deep Learning
+- Xception
+- XLNet
+- AlexNet
+- BART
+- InceptionNetV2
+- InceptionNetV3
+- InceptionNetV4
+- InceptionResNet
+- Layout LM
+- Layout LM v2
+- Layout LM v3
+- LeNet
+- LiLT
+- Feature Pyramid Network
+- Feature Tokenizer Transformer
+- Focal Loss (RetinaNet)
