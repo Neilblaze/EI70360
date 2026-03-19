@@ -1,0 +1,69 @@
+\documentclass[]{research}
+% Option "twocolumn" available, but please prioritize single-column
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{pgfplots}
+\usepackage{graphicx}
+\usepackage{array}
+\pgfplotsset{compat=1.18}
+\usepackage{arydshln}
+\usepackage{fontawesome5}
+
+\makeatletter
+\def\adl@drawiv#1#2#3{%
+        \hskip.5\tabcolsep
+        \xleaders#3{#2.5\@tempdimb #1{1}#2.5\@tempdimb}%
+                #2\z@ plus1fil minus1fil\relax
+        \hskip.5\tabcolsep}
+\newcommand{\cdashlinelr}[1]{%
+  \noalign{\vskip\aboverulesep
+           \global\let\@dashdrawstore\adl@draw
+           \global\let\adl@draw\adl@drawiv}
+  \cdashline{#1}
+  \noalign{\global\let\adl@draw\@dashdrawstore
+           \vskip\belowrulesep}}
+\makeatother
+
+\newcommand{\todo}[1]{\textcolor{purple}{#1}}
+
+\title{Make Research Papers Great Again!}
+\author[*]{Author 1}
+\author[*]{Author 2}
+\author[]{Author 3}
+
+\affiliation[]{}
+
+\contribution[*]{Equal Contribution}
+
+\abstract{}
+
+% \date{\today}
+\correspondence{Author 1 at \email{author1@gmail.com}, Author 2 at \email{autho42@gmail.com}}
+
+% You can add additional metadata fields as follows 
+\metadata[{\faGithub}~Training Code]{:)}
+\metadata[{\hspace{-0.1em}\raisebox{-0.2em}{\includegraphics[height=1.2em]{hf-logo.pdf}}}~Models]{\url{https://huggingface.co/collections/open-lm-engine/m2rnn}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\clearpage
+\newpage
+\bibliographystyle{plainnat}
+\bibliography{paper}
+
+%\clearpage
+%\newpage
+%\beginappendix
+
+%\section{First appendix}
+
+\end{document}
