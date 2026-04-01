@@ -1,0 +1,102 @@
+- What are the limits of intelligence imposed by computation, physics, or logic?
+- What would a complete mathematical theory of intelligence look like?
+- Are human values compressible into a coherent objective function?
+- What is the relationship between intelligence and goals?
+- What hidden assumptions underlie current AI paradigms?
+- What is the minimal architecture required for general intelligence?
+- How can we rigorously distinguish understanding from imitation?
+- Is alignment fundamentally solvable or inherently unstable at scale?
+- What are the failure modes of superintelligent systems?
+- What is the optimal structure of human AI collective intelligence?
+- Is intelligence fundamentally prediction, compression, or something else?
+- What are the universal laws of emergence across domains?
+- Why is mathematics effective at describing reality?
+- What distinguishes true discovery from combinatorial novelty?
+- What is the structure of the space of all possible ideas?
+- What are the stable equilibria of AI driven global power?
+- How can intelligence be amplified safely across biological and artificial systems?
+- Can AI discover fundamentally new physics or mathematics?
+- What is the minimal condition for consciousness?
+- What does it mean to make the world better in a rigorous sense?
+- What is the state of the art in artificial intelligence engineering practice?
+- How does artificial intelligence work at a mechanistic level?
+- What is the current state of empirical research and mathematical theory in AI?
+- How should artificial general intelligence and superintelligence be defined?
+- What is the shortest path to building AGI?
+- What are the deepest limitations of current AI architectures?
+- How much of intelligence is search versus learning versus reasoning?
+- What are scaling laws missing about intelligence?
+- What hidden variables explain AI progress?
+- What would an AI system look like that can rewrite its own learning rules?
+- Can alignment be solved without solving consciousness or values?
+- Is corrigibility stable under recursive self-improvement?
+- What does provable safety mean for superintelligence?
+- What happens if intelligence and goals are orthogonal?
+- Is alignment a technical problem or a philosophical problem?
+- How should cognition be divided between humans and machines?
+- How can collective intelligence exceed individual intelligence?
+- What are the limits of brain augmentation?
+- Can intelligence be modular and recombined arbitrarily?
+- What forms of collaboration produce emergence rather than noise?
+- How can over reliance on AI be avoided?
+- What is the interface between human thought and machine reasoning?
+- What is the difference between novelty and discovery?
+- Can creativity be formalized as search in conceptual space?
+- What makes an idea deep rather than complex?
+- How does constraint enable creativity?
+- Are there domains where human intuition remains irreducible?
+- Is the universe discrete, continuous, or something else?
+- What would a final theory explain and what would it leave out?
+- Are there alternative mathematical frameworks for reality?
+- What is the relationship between computation and physical law?
+- Does reality compute itself or is computation a model?
+- What role do symmetry and invariance play in physics?
+- Is consciousness necessary for intelligence?
+- Can consciousness be simulated or only instantiated?
+- How can consciousness be measured?
+- Is consciousness continuous or discrete?
+- What is the relationship between attention and awareness?
+- Could radically different forms of consciousness exist?
+- When does complexity become intelligence?
+- Are there predictable patterns in complex system evolution?
+- How do local rules generate global structure?
+- Can emergence be reverse engineered?
+- What distinguishes fragile from robust complexity?
+- Are there objective moral truths?
+- How should conflicting human values be aggregated?
+- What is the moral status of artificial minds?
+- Should intelligence expansion be constrained or maximized?
+- What trade offs are inevitable in any future civilization?
+- How should systems improve values rather than just satisfy them?
+- Does AI centralize or decentralize power?
+- What are the paths to global coordination or failure?
+- How do information asymmetries reshape strategy?
+- What happens when power depends on intelligence amplification?
+- Can open AI coexist with national security constraints?
+- What can never be known even in principle?
+- What distinguishes explanation from prediction?
+- How do we recognize a complete theory?
+- What are the limits of formal systems?
+- Can all truths be derived, or are some axiomatic?
+- What is the role of intuition in knowledge?
+- Which questions are ill-posed or meaningless?
+- What questions are we systematically failing to ask?
+- How do we identify the highest leverage questions?
+- When does asking better questions matter more than answers?
+- What are the hidden assumptions in any given question?
+- What would falsify the current best answer?
+- What is the simplest version of a problem?
+- What is the strongest opposing viewpoint?
+- What would this look like if we are fundamentally wrong?
+- What must intelligence optimize for in any possible universe?
+- Is intelligence substrate independent or are there necessary physical constraints?
+- What is the simplest possible system that can be called intelligent?
+- Can all knowledge be reduced to pattern compression?
+- What escapes compression in any model of intelligence?
+- What is the relationship between information entropy and meaning?
+- What would an AI system look like that can improve its own objectives? (cc: [Autoresearch](https://github.com/karpathy/autoresearch) / by A.Karpathy)
+- What is the precise threshold between narrow AI and general intelligence?
+- Is alignment a technical problem a philosophical problem or a political problem?
+
+> [!NOTE]
+> I’ll add a few more as I spend more time asking questions to different state-of-the-art language models in my free time.
