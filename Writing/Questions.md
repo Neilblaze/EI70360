@@ -1,3 +1,7 @@
+## Explorations \w AI
+I tend to spend some of my daily time chatting with AI, & here are some thought-provoking questions that have been on my mind.
+<br/>
+
 - What are the limits of intelligence imposed by computation, physics, or logic?
 - What would a complete mathematical theory of intelligence look like?
 - Are human values compressible into a coherent objective function?
@@ -94,9 +98,11 @@
 - Can all knowledge be reduced to pattern compression?
 - What escapes compression in any model of intelligence?
 - What is the relationship between information entropy and meaning?
-- What would an AI system look like that can improve its own objectives? (cc: [Autoresearch](https://github.com/karpathy/autoresearch) / by A.Karpathy)
+- What would an AI system look like that can improve its own objectives? (cc: [Autoresearch](https://github.com/karpathy/autoresearch) / by A. Karpathy)
 - What is the precise threshold between narrow AI and general intelligence?
 - Is alignment a technical problem a philosophical problem or a political problem?
+
+<br/>
 
 > [!NOTE]
 > I’ll add a few more as I spend more time asking questions to different state-of-the-art language models in my free time.
